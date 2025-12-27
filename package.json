@@ -1,0 +1,56 @@
+{
+  "name": "fhe-playground",
+  "version": "1.0.0",
+  "description": "Tooling for generating standalone FHEVM example repositories and documentation",
+  "bin": {
+    "fhe-playground": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "contracts",
+    "test",
+    "fhevm-hardhat-template",
+    "package.json",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "prepack": "npm run build",
+    "cli": "npx ts-node scripts/cli.ts",
+    "create-example": "npx ts-node scripts/cli.ts example",
+    "create-category": "npx ts-node scripts/cli.ts category",
+    "generate-docs": "npx ts-node scripts/cli.ts docs",
+    "generate-all-docs": "npx ts-node scripts/cli.ts docs --all",
+    "discover": "npx ts-node scripts/cli.ts discover",
+    "refresh": "npx ts-node scripts/cli.ts refresh",
+    "validate": "npx ts-node scripts/cli.ts validate",
+    "batch": "npx ts-node scripts/cli.ts batch"
+  },
+  "keywords": [
+    "fhevm",
+    "zama",
+    "encryption",
+    "blockchain",
+    "examples",
+    "documentation",
+    "generator"
+  ],
+  "author": "Destiny",
+  "license": "BSD-3-Clause-Clear",
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Destiny-01/fhe-playground"
+  },
+  "dependencies": {
+    "kleur": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.27",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}

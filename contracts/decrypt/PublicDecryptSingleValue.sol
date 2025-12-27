@@ -1,0 +1,118 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import { FHE, ebool } from "@fhevm/solidity/lib/FHE.sol";
+import { ZamaEthereumConfig } from "@fhevm/solidity/config/ZamaConfig.sol";
+
+/// @title Public Decrypt Single Value - Demonstrates public permissionless decryption using FHE.makePubliclyDecryptable
+contract PublicDecryptSingleValue is ZamaEthereumConfig {
+    constructor() {}
+
+    /**
+     * @notice Simple counter to assign a unique ID to each new game.
+     */
+    uint256 private counter = 0;
+
+    /**
+     * @notice Defines the entire state for a single Heads or Tails game instance.
+     */
+    struct Game {
+        /// @notice The address of the player who chose Heads.
+        address headsPlayer;
+        /// @notice The address of the player who chose Tails.
+        address tailsPlayer;
+        /// @notice The core encrypted result. This is a publicly decryptable ebool handle.
+        //          true means Heads won; false means Tails won.
+        ebool encryptedHasHeadsWon;
+        /// @notice The clear address of the final winner, set after decryption and verification.
+        address winner;
+    }
+
+    /**
+     * @notice Mapping to store all game states, accessible by a unique game ID.
+     */
+    mapping(uint256 gameId => Game game) public games;
+
+    /**
+     * @notice Emitted when a new game is started, providing the encrypted handle required for decryption.
+     * @param gameId The unique identifier for the game.
+     * @param headsPlayer The address choosing Heads.
+     * @param tailsPlayer The address choosing Tails.
+     * @param encryptedHasHeadsWon The encrypted handle (ciphertext) storing the result.
+     */
+    event GameCreated(
+        uint256 indexed gameId,
+        address indexed headsPlayer,
+        address indexed tailsPlayer,
+        ebool encryptedHasHeadsWon
+    );
+
+    /// @dev Generates encrypted random result and makes it publicly decryptable for permissionless decryption
+    function headsOrTails(address headsPlayer, address tailsPlayer) external {
+        require(headsPlayer != address(0), "Heads player is address zero");
+        require(tailsPlayer != address(0), "Tails player is address zero");
+        require(headsPlayer != tailsPlayer, "Heads player and Tails player should be different");
+
+        ebool headsOrTailsResult = FHE.randEbool();
+
+        counter++;
+
+        uint256 gameId = counter;
+        games[gameId] = Game({
+            headsPlayer: headsPlayer,
+            tailsPlayer: tailsPlayer,
+            encryptedHasHeadsWon: headsOrTailsResult,
+            winner: address(0)
+        });
+
+        FHE.makePubliclyDecryptable(headsOrTailsResult);
+
+        emit GameCreated(gameId, headsPlayer, tailsPlayer, games[gameId].encryptedHasHeadsWon);
+    }
+
+    /**
+     * @notice Returns the number of games created so far.
+     * @return The number of games created.
+     */
+    function getGamesCount() public view returns (uint256) {
+        return counter;
+    }
+
+    /**
+     * @notice Returns the encrypted ebool handle that stores the game result.
+     * @param gameId The ID of the game.
+     * @return The encrypted result (ebool handle).
+     */
+    function hasHeadsWon(uint256 gameId) public view returns (ebool) {
+        return games[gameId].encryptedHasHeadsWon;
+    }
+
+    /**
+     * @notice Returns the address of the game winner.
+     * @param gameId The ID of the game.
+     * @return The winner's address (address(0) if not yet revealed).
+     */
+    function getWinner(uint256 gameId) public view returns (address) {
+        require(games[gameId].winner != address(0), "Game winner not yet revealed");
+        return games[gameId].winner;
+    }
+
+    /// @dev Verifies decryption proof and determines winner from publicly decrypted result
+    function recordAndVerifyWinner(
+        uint256 gameId,
+        bytes memory abiEncodedClearGameResult,
+        bytes memory decryptionProof
+    ) public {
+        require(games[gameId].winner == address(0), "Game winner already revealed");
+
+        bytes32[] memory cts = new bytes32[](1);
+        cts[0] = FHE.toBytes32(games[gameId].encryptedHasHeadsWon);
+
+        FHE.checkSignatures(cts, abiEncodedClearGameResult, decryptionProof);
+
+        bool decodedClearGameResult = abi.decode(abiEncodedClearGameResult, (bool));
+        address winner = decodedClearGameResult ? games[gameId].headsPlayer : games[gameId].tailsPlayer;
+
+        games[gameId].winner = winner;
+    }
+}

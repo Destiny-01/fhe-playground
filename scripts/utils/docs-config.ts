@@ -1,0 +1,237 @@
+/**
+ * Documentation configurations - centralized configuration data
+ */
+
+import { DocsConfig } from "./config";
+
+export const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
+  "fhe-counter": {
+    title: "FHE Counter",
+    description:
+      "This example demonstrates how to build a confidential counter using FHEVM, in comparison to a simple counter.",
+    contract: "contracts/basic/FHECounter.sol",
+    test: "test/basic/FHECounter.ts",
+    output: "docs/basic/fhe-counter.md",
+    category: "Basic",
+  },
+  "fhe-add": {
+    title: "FHE Add Operation",
+    description:
+      "This example demonstrates how to perform addition operations on encrypted values.",
+    contract: "contracts/basic/fhe-operations/FHEAdd.sol",
+    test: "test/basic/fhe-operations/FHEAdd.ts",
+    output: "docs/basic/fhe-operations/fhe-add.md",
+    category: "Basic - FHE Operations",
+  },
+  "fhe-if-then-else": {
+    title: "FHE If-Then-Else",
+    description:
+      "This example shows conditional operations on encrypted values using FHE.",
+    contract: "contracts/basic/fhe-operations/FHEIfThenElse.sol",
+    test: "test/basic/fhe-operations/FHEIfThenElse.ts",
+    output: "docs/basic/fhe-operations/fhe-if-then-else.md",
+    category: "Basic - FHE Operations",
+  },
+
+  fheand: {
+    title: "F H E And",
+    description: "Example: FHEAnd",
+    contract: "contracts/fundamentals/fhe-boolean-logic/FHEAnd.sol",
+    test: "test/fundamentals/fhe-boolean-logic/FHEAnd.ts",
+    output: "docs/fundamentals/fhe-boolean-logic/fhe-and.md",
+    category: "Fundamentals - FHE Boolean Logic",
+  },
+  fhenot: {
+    title: "F H E Not",
+    description: "Example: FHENot",
+    contract: "contracts/fundamentals/fhe-boolean-logic/FHENot.sol",
+    test: "test/fundamentals/fhe-boolean-logic/FHENot.ts",
+    output: "docs/fundamentals/fhe-boolean-logic/fhe-not.md",
+    category: "Fundamentals - FHE Boolean Logic",
+  },
+  fheor: {
+    title: "F H E Or",
+    description: "Example: FHEOr",
+    contract: "contracts/fundamentals/fhe-boolean-logic/FHEOr.sol",
+    test: "test/fundamentals/fhe-boolean-logic/FHEOr.ts",
+    output: "docs/fundamentals/fhe-boolean-logic/fhe-or.md",
+    category: "Fundamentals - FHE Boolean Logic",
+  },
+  fhexor: {
+    title: "F H E Xor",
+    description: "Example: FHEXor",
+    contract: "contracts/fundamentals/fhe-boolean-logic/FHEXor.sol",
+    test: "test/fundamentals/fhe-boolean-logic/FHEXor.ts",
+    output: "docs/fundamentals/fhe-boolean-logic/fhe-xor.md",
+    category: "Fundamentals - FHE Boolean Logic",
+  },
+  fheequal: {
+    title: "F H E Equal",
+    description: "Example: FHEEqual",
+    contract: "contracts/fundamentals/fhe-comparisons/FHEEqual.sol",
+    test: "test/fundamentals/fhe-comparisons/FHEEqual.ts",
+    output: "docs/fundamentals/fhe-comparisons/fhe-equal.md",
+    category: "Fundamentals - FHE Comparisons",
+  },
+  "fhegreater-than": {
+    title: "F H E Greater Than",
+    description: "Example: FHEGreaterThan",
+    contract: "contracts/fundamentals/fhe-comparisons/FHEGreaterThan.sol",
+    test: "test/fundamentals/fhe-comparisons/FHEGreaterThan.ts",
+    output: "docs/fundamentals/fhe-comparisons/fhe-greater-than.md",
+    category: "Fundamentals - FHE Comparisons",
+  },
+  "fhegreater-than-or-equal": {
+    title: "F H E Greater Than Or Equal",
+    description: "Example: FHEGreaterThanOrEqual",
+    contract:
+      "contracts/fundamentals/fhe-comparisons/FHEGreaterThanOrEqual.sol",
+    test: "test/fundamentals/fhe-comparisons/FHEGreaterThanOrEqual.ts",
+    output: "docs/fundamentals/fhe-comparisons/fhe-greater-than-or-equal.md",
+    category: "Fundamentals - FHE Comparisons",
+  },
+  "fheless-than": {
+    title: "F H E Less Than",
+    description: "Example: FHELessThan",
+    contract: "contracts/fundamentals/fhe-comparisons/FHELessThan.sol",
+    test: "test/fundamentals/fhe-comparisons/FHELessThan.ts",
+    output: "docs/fundamentals/fhe-comparisons/fhe-less-than.md",
+    category: "Fundamentals - FHE Comparisons",
+  },
+  "fheless-than-or-equal": {
+    title: "F H E Less Than Or Equal",
+    description: "Example: FHELessThanOrEqual",
+    contract: "contracts/fundamentals/fhe-comparisons/FHELessThanOrEqual.sol",
+    test: "test/fundamentals/fhe-comparisons/FHELessThanOrEqual.ts",
+    output: "docs/fundamentals/fhe-comparisons/fhe-less-than-or-equal.md",
+    category: "Fundamentals - FHE Comparisons",
+  },
+  fheselect: {
+    title: "F H E Select",
+    description: "Example: FHESelect",
+    contract: "contracts/fundamentals/fhe-conditionals/FHESelect.sol",
+    test: "test/fundamentals/fhe-conditionals/FHESelect.ts",
+    output: "docs/fundamentals/fhe-conditionals/fhe-select.md",
+    category: "Fundamentals - FHE Conditionals",
+  },
+  fhemultiply: {
+    title: "F H E Multiply",
+    description: "Example: FHEMultiply",
+    contract: "contracts/fundamentals/fhe-operations/FHEMultiply.sol",
+    test: "test/fundamentals/fhe-operations/FHEMultiply.ts",
+    output: "docs/fundamentals/fhe-operations/fhe-multiply.md",
+    category: "Fundamentals - FHE Operations",
+  },
+  fhesubtract: {
+    title: "F H E Subtract",
+    description: "Example: FHESubtract",
+    contract: "contracts/fundamentals/fhe-operations/FHESubtract.sol",
+    test: "test/fundamentals/fhe-operations/FHESubtract.ts",
+    output: "docs/fundamentals/fhe-operations/fhe-subtract.md",
+    category: "Fundamentals - FHE Operations",
+  },
+
+  "fheencryption-patterns": {
+    title: "F H E Encryption Patterns",
+    description: "Example: FHEEncryptionPatterns",
+    contract:
+      "contracts/fundamentals/fhe-encryption-patterns/FHEEncryptionPatterns.sol",
+    test: "test/fundamentals/fhe-encryption-patterns/FHEEncryptionPatterns.ts",
+    output:
+      "docs/fundamentals/fhe-encryption-patterns/fheencryption-patterns.md",
+    category: "Fundamentals - Fhe Encryption Patterns",
+  },
+  "fhehandle-lifecycle": {
+    title: "F H E Handle Lifecycle",
+    description: "Example: FHEHandleLifecycle",
+    contract:
+      "contracts/fundamentals/fhe-handle-lifecycle/FHEHandleLifecycle.sol",
+    test: "test/fundamentals/fhe-handle-lifecycle/FHEHandleLifecycle.ts",
+    output: "docs/fundamentals/fhe-handle-lifecycle/fhehandle-lifecycle.md",
+    category: "Fundamentals - Fhe Handle Lifecycle",
+  },
+
+  "user-decrypt-multiple-values": {
+    title: "User Decrypt Multiple Values",
+    description: "Example: UserDecryptMultipleValues",
+    contract: "contracts/decrypt/UserDecryptMultipleValues.sol",
+    test: "test/decrypt/UserDecryptMultipleValues.ts",
+    output: "docs/decrypt/user-decrypt-multiple-values.md",
+    category: "Decrypt",
+  },
+  "user-decrypt-single-value": {
+    title: "User Decrypt Single Value",
+    description: "Example: UserDecryptSingleValue",
+    contract: "contracts/decrypt/UserDecryptSingleValue.sol",
+    test: "test/decrypt/UserDecryptSingleValue.ts",
+    output: "docs/decrypt/user-decrypt-single-value.md",
+    category: "Decrypt",
+  },
+
+  'view-function-anti-pattern': {
+    title: 'View Function Anti Pattern',
+    description: 'Example: ViewFunctionAntiPattern',
+    contract: 'contracts/anti-patterns/ViewFunctionAntiPattern.sol',
+    test: 'test/anti-patterns/ViewFunctionAntiPattern.ts',
+    output: 'docs/anti-patterns/view-function-anti-pattern.md',
+    category: 'Anti Patterns',
+  },
+
+  'gas-limit-pitfalls': {
+    title: 'Gas Limit Pitfalls',
+    description: 'Example: GasLimitPitfalls',
+    contract: 'contracts/anti-patterns/GasLimitPitfalls.sol',
+    test: 'test/anti-patterns/GasLimitPitfalls.ts',
+    output: 'docs/anti-patterns/gas-limit-pitfalls.md',
+    category: 'Anti Patterns',
+  },
+  'fheaccess-control': {
+    title: 'F H E Access Control',
+    description: 'Example: FHEAccessControl',
+    contract: 'contracts/fundamentals/fhe-permissions/FHEAccessControl.sol',
+    test: 'test/fundamentals/fhe-permissions/FHEAccessControl.ts',
+    output: 'docs/fundamentals/fhe-permissions/fheaccess-control.md',
+    category: 'Fundamentals - Fhe Permissions',
+  },
+
+  'incorrect-reencryption': {
+    title: 'Incorrect Reencryption',
+    description: 'Example: IncorrectReencryption',
+    contract: 'contracts/anti-patterns/IncorrectReencryption.sol',
+    test: 'test/anti-patterns/IncorrectReencryption.ts',
+    output: 'docs/anti-patterns/incorrect-reencryption.md',
+    category: 'Anti Patterns',
+  },
+  'missing-permission-anti-pattern': {
+    title: 'Missing Permission Anti Pattern',
+    description: 'Example: MissingPermissionAntiPattern',
+    contract: 'contracts/anti-patterns/MissingPermissionAntiPattern.sol',
+    test: 'test/anti-patterns/MissingPermissionAntiPattern.ts',
+    output: 'docs/anti-patterns/missing-permission-anti-pattern.md',
+    category: 'Anti Patterns',
+  },
+  'state-management-mistakes': {
+    title: 'State Management Mistakes',
+    description: 'Example: StateManagementMistakes',
+    contract: 'contracts/anti-patterns/StateManagementMistakes.sol',
+    test: 'test/anti-patterns/StateManagementMistakes.ts',
+    output: 'docs/anti-patterns/state-management-mistakes.md',
+    category: 'Anti Patterns',
+  },
+  'input-proof-basics': {
+    title: 'Input Proof Basics',
+    description: 'Example: InputProofBasics',
+    contract: 'contracts/input-proofs/InputProofBasics.sol',
+    test: 'test/input-proofs/InputProofBasics.ts',
+    output: 'docs/input-proofs/input-proof-basics.md',
+    category: 'Input Proofs',
+  },
+  'input-proof-error-handling': {
+    title: 'Input Proof Error Handling',
+    description: 'Example: InputProofErrorHandling',
+    contract: 'contracts/input-proofs/InputProofErrorHandling.sol',
+    test: 'test/input-proofs/InputProofErrorHandling.ts',
+    output: 'docs/input-proofs/input-proof-error-handling.md',
+    category: 'Input Proofs',
+  },
+};

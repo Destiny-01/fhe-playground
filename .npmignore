@@ -1,0 +1,35 @@
+# Development files
+node_modules/
+scripts/
+tsconfig.json
+*.ts
+!*.d.ts
+
+# Build artifacts (these will be included)
+# dist/ is intentionally NOT ignored - it's needed for the package
+
+# Output and test files
+output/
+*.log
+.DS_Store
+
+# Git files
+.git/
+.gitignore
+.gitmodules
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation that shouldn't be in package
+bounty-description.md
+docs/
+my-encrypted-poker-project/
+
+# Temporary files
+*.tmp
+*.temp
+
