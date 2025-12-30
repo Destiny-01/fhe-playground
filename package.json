@@ -1,6 +1,6 @@
 {
   "name": "fhe-playground",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tooling for generating standalone FHEVM example repositories and documentation",
   "bin": {
     "fhe-playground": "./dist/cli.js"
