@@ -33,45 +33,40 @@ Each example includes:
 
 ### Getting Started
 
-1. **Clone the repository**
+**Use via npx (Recommended - No Installation Required):**
 
-   ```bash
-   git clone <repository-url>
-   cd example-hub
-   ```
+```bash
+# Interactive mode
+npx fhe-playground
 
-2. **Install dependencies**
+# Generate a standalone example
+npx fhe-playground example fhe-counter ./output/my-counter
 
-   ```bash
-   npm install
-   ```
+# Navigate to the generated example
+cd ./output/fhevm-example-fhe-counter
 
-3. **Generate a standalone example**
+# Install and test
+npm install
+npm run compile
+npm run test
+```
 
-   ```bash
-   # Generate an example
-   npm run cli example fhe-counter ./output/my-counter
+**Generate documentation:**
 
-   # Navigate to the example
-   cd output/my-counter
+```bash
+# Generate docs for a specific example
+npx fhe-playground docs fhe-counter
 
-   # Install and test
-   npm install
-   npm run compile
-   npm run test
-   ```
+# Or generate all documentation
+npx fhe-playground docs --all
+```
 
-4. **View documentation**
+**Or install globally:**
 
-   Browse the examples below or generate documentation:
-
-   ```bash
-   # Generate docs for a specific example
-   npm run generate-docs fhe-counter
-
-   # Or generate all documentation
-   npm run generate-all-docs
-   ```
+```bash
+npm install -g fhe-playground
+fhe-playground example fhe-counter ./output/my-counter
+```
 
 ## Example Categories
 
@@ -207,17 +202,20 @@ We welcome contributions! When adding new examples:
 2. Add `@dev` comments for key code sections
 3. Include comprehensive tests with explanations
 4. Follow the existing code style and patterns
-5. Run `npm run discover` to auto-configure
-6. Ensure all tests pass before submitting
+5. Place your contract in `contracts/<category>/` and test in `test/<category>/`
+6. Run `npx fhe-playground discover` to auto-configure (it will test and add your example automatically)
+7. Ensure all tests pass before submitting
 
-See the [Contributing Guide](../README.md#contributing) for detailed guidelines.
+See the [Contributing Guide](../README.md#creating-a-new-example) for detailed guidelines.
 
 ## Resources
 
+- **npm Package**: [fhe-playground](https://www.npmjs.com/package/fhe-playground) - Use via `npx fhe-playground`
 - **FHEVM Documentation**: https://docs.zama.ai/fhevm
 - **Protocol Examples**: https://docs.zama.org/protocol/examples
 - **Base Template**: https://github.com/zama-ai/fhevm-hardhat-template
 - **OpenZeppelin Confidential Contracts**: https://github.com/OpenZeppelin/openzeppelin-confidential-contracts
+- **GitHub Repository**: https://github.com/Destiny-01/fhe-playground
 
 ## Next Steps
 

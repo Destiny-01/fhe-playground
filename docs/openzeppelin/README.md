@@ -18,13 +18,13 @@ Before you begin, ensure you have the following installed:
 
 #### Option 1: Using the Example Generator (Recommended)
 
-The easiest way to get started is using the FHEVM Examples Generator, which automatically handles dependencies:
+The easiest way to get started is using the FHEVM Examples Generator via npx, which automatically handles dependencies:
 
 1. **Generate an OpenZeppelin example:**
 
    ```bash
-   npm run cli example erc7984-example ./my-project
-   cd my-project
+   npx fhe-playground example erc7984-example ./my-project
+   cd ./my-project/fhevm-example-erc7984-example
    ```
 
 2. **Dependencies are automatically configured!** The generator detects OpenZeppelin imports and adds the required packages to `package.json`.
@@ -37,39 +37,6 @@ The easiest way to get started is using the FHEVM Examples Generator, which auto
    npm test
    ```
 
-#### Option 2: Manual Setup
-
-1. **Clone the FHEVM Hardhat template repository:**
-
-   ```bash
-   git clone https://github.com/zama-ai/fhevm-hardhat-template conf-token
-   cd conf-token
-   ```
-
-2. **Install project dependencies:**
-
-   ```bash
-   npm ci
-   ```
-
-3. **Install OpenZeppelin's confidential contracts library:**
-
-   ```bash
-   npm i @openzeppelin/confidential-contracts @openzeppelin/contracts
-   ```
-
-4. **Compile the contracts:**
-
-   ```bash
-   npm run compile
-   ```
-
-5. **Run the test suite:**
-
-   ```bash
-   npm test
-   ```
-
 ### Dependency Management
 
 When using the example generator, external dependencies are automatically detected and configured. The generator:
@@ -78,7 +45,7 @@ When using the example generator, external dependencies are automatically detect
 - ✅ Adds them to the generated project's `package.json` with configured versions
 - ✅ Ensures reproducible builds with version pinning
 
-**Note**: If you're adding a new example with OpenZeppelin dependencies, make sure the versions are configured in the root `package.json` → `dependencyVersions` field. See the main [README.md](../../README.md) for details.
+**Note**: If you're adding a new example with OpenZeppelin dependencies, make sure the versions are configured in the root `package.json` → `dependencyVersions` field. The discovery tool will automatically handle this when you run `npx fhe-playground discover`. See the main [README.md](../../README.md) for details.
 
 ## Available Guides
 
