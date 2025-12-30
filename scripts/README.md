@@ -225,6 +225,66 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
 };
 ```
 
+## Dependency Version Configuration
+
+When your contracts use external npm packages (like OpenZeppelin), you need to configure their versions in the root `package.json`.
+
+### Setting Up Dependency Versions
+
+Add a `dependencyVersions` field to the root `package.json`:
+
+```json
+{
+  "dependencyVersions": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/confidential-contracts": "^0.3.0",
+    "@fhevm/solidity": "^0.9.1",
+    "@your-package/name": "^1.0.0"
+  }
+}
+```
+
+### How It Works
+
+1. **Automatic Detection**: The system automatically scans contract import statements and detects npm-scoped packages (starting with `@`)
+
+2. **Version Lookup**: When generating examples or categories, it looks up each detected package in `dependencyVersions`
+
+3. **Automatic Installation**: Detected dependencies are automatically added to the generated project's `package.json` with the configured version
+
+4. **Warnings**: If a package is used but not configured, you'll see a warning:
+   ```
+   Package "@your-package/name" detected but not configured in package.json dependencyVersions.
+   Add it to package.json dependencyVersions to specify a version, or it will use 'latest'.
+   ```
+
+### Example
+
+**Contract:**
+```solidity
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {MyLib} from "@mycompany/mylib/utils/MyLib.sol";
+```
+
+**package.json:**
+```json
+{
+  "dependencyVersions": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@mycompany/mylib": "^1.2.3"
+  }
+}
+```
+
+**Result**: When generating the example, both packages will be automatically added to the generated project's `package.json` with the specified versions.
+
+### Best Practices
+
+- ✅ **Always configure versions** for external dependencies to ensure reproducible builds
+- ✅ **Use semantic versioning** (e.g., `^5.0.0` for compatible updates)
+- ✅ **Test after adding new dependencies** to ensure they work correctly
+- ✅ **Update versions regularly** to get security patches and new features
+
 ## Adding New Examples
 
 The recommended workflow is to use the `discover` command, which automatically:
@@ -239,9 +299,14 @@ The recommended workflow is to use the `discover` command, which automatically:
 
 1. Add contract to `contracts/<category>/`
 2. Add test to `test/<category>/`
-3. Update configuration files (or run `discover`)
-4. Generate documentation
-5. Test the generated example
+3. **Configure external dependencies** (if your contract uses npm packages):
+   - Add package versions to `package.json` → `dependencyVersions`
+   - See [Dependency Version Configuration](#dependency-version-configuration) above
+4. Update configuration files (or run `discover`)
+5. Generate documentation
+6. Test the generated example
+
+**Important**: If your contract uses external npm packages, make sure to add them to `dependencyVersions` in `package.json` before running `discover` or generating examples. The system will automatically detect and include them.
 
 See the root [README.md](../README.md) for the complete contribution guide.
 

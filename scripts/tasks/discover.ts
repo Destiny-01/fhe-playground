@@ -13,6 +13,14 @@ import { getProjectRoot } from "../utils/paths";
 import * as kleur from "kleur";
 import { ExampleConfig } from "../utils/config";
 import { EXAMPLES_CONFIG } from "../utils/docs-config";
+import {
+  validateCategoriesConfigOrExit,
+  normalizeKeyForComparison,
+} from "../utils/validate-config";
+import {
+  addExamplesToCategories,
+  validateCategoriesConfigSyntax,
+} from "../utils/config-updater";
 
 /**
  * Generate config entry for example
@@ -143,6 +151,9 @@ function generateDocsConfigEntry(example: {
  * Discover and update configs
  */
 export async function discoverAndUpdate(): Promise<void> {
+  // Validate categories config before proceeding
+  validateCategoriesConfigOrExit();
+
   logger.highlight("\nDiscovering New Examples...\n");
 
   const newExamples = findNewExamples();
@@ -402,11 +413,12 @@ export async function discoverAndUpdate(): Promise<void> {
   logger.highlight("Discovery Summary");
   logger.separator();
   logger.log("");
-  
-  const totalExamples = successfullyTestedExamples.length + failedExamples.length;
+
+  const totalExamples =
+    successfullyTestedExamples.length + failedExamples.length;
   logger.info(`Total examples discovered: ${totalExamples}`);
   logger.log("");
-  
+
   if (successfullyTestedExamples.length > 0) {
     logger.success(
       `✓ ${successfullyTestedExamples.length} example(s) passed validation and were added:`
@@ -417,9 +429,11 @@ export async function discoverAndUpdate(): Promise<void> {
     });
     logger.log("");
   }
-  
+
   if (failedExamples.length > 0) {
-    logger.warning(`✗ ${failedExamples.length} example(s) failed validation and were NOT added:`);
+    logger.warning(
+      `✗ ${failedExamples.length} example(s) failed validation and were NOT added:`
+    );
     logger.log("");
     failedExamples.forEach(({ example, error }) => {
       logger.log(`  ${kleur.red("✗")} ${kleur.cyan(example.exampleKey)}`);
@@ -427,7 +441,7 @@ export async function discoverAndUpdate(): Promise<void> {
     });
     logger.log("");
   }
-  
+
   logger.separator();
   logger.log("");
 
@@ -443,12 +457,13 @@ export async function discoverAndUpdate(): Promise<void> {
   logger.step("Updating configuration files...");
   logger.log("");
 
-  // Group examples by category to update categories-config.ts
+  // Group examples by category
   const examplesByCategory = new Map<
     string,
     typeof successfullyTestedExamples
   >();
   const newCategories: string[] = [];
+
   for (const example of successfullyTestedExamples) {
     if (!examplesByCategory.has(example.category)) {
       examplesByCategory.set(example.category, []);
@@ -456,223 +471,65 @@ export async function discoverAndUpdate(): Promise<void> {
     examplesByCategory.get(example.category)!.push(example);
   }
 
-  // Update categories-config.ts for new categories
+  // Update categories-config.ts using the robust updater
   const categoriesConfigPath = path.join(
     rootDir,
     "scripts",
     "utils",
     "categories-config.ts"
   );
+
   if (fs.existsSync(categoriesConfigPath)) {
-    let categoriesConfigContent = fs.readFileSync(
-      categoriesConfigPath,
-      "utf-8"
-    );
-
-    // Helper function to format category key (quote if needed)
-    const formatCategoryKey = (key: string): string => {
-      // Quote keys that contain hyphens, spaces, or other special characters
-      if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key)) {
-        return `'${key}'`;
-      }
-      return key;
-    };
-
-    // Helper function to create regex pattern for category key (handles both quoted and unquoted)
-    const createCategoryRegex = (key: string): RegExp => {
-      const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      // Match both quoted and unquoted versions
-      return new RegExp(`^\\s*('${escapedKey}'|${escapedKey}):\\s*\\{`, "m");
-    };
-
-    // Import CATEGORIES to check existing categories
-    // We need to use a dynamic import or read the file
-    // For now, check if category key exists in the file content
-    for (const [category, examples] of examplesByCategory.entries()) {
-      // Check if category already exists in the config file
-      const categoryRegex = createCategoryRegex(category);
-      const categoryExists = categoryRegex.test(categoriesConfigContent);
-
-      if (!categoryExists) {
-        // New category - need to add it
-        logger.log(`  Adding new category: ${category}`);
-
-        // Generate category entry
+    try {
+      // Prepare examples data for the updater
+      const examplesForUpdate = successfullyTestedExamples.map((example) => {
         const categoryName =
-          category.charAt(0).toUpperCase() +
-          category.slice(1).replace(/-/g, " ");
-        const categoryDescription = `Examples for ${categoryName}`;
-        const categoryContracts = examples
-          .map((ex) => {
-            const contractEntry = `      {
-        path: '${ex.contractPath}',
-        test: '${ex.testPath}',
-      }`;
-            return contractEntry;
-          })
-          .join(",\n");
+          example.category.charAt(0).toUpperCase() +
+          example.category.slice(1).replace(/-/g, " ");
 
-        const formattedCategoryKey = formatCategoryKey(category);
-        const categoryEntry = `  ${formattedCategoryKey}: {
-    name: '${categoryName}',
-    description: '${categoryDescription}',
-    contracts: [
-${categoryContracts}
-    ],
-  },`;
+        return {
+          category: example.category,
+          contractPath: example.contractPath,
+          testPath: example.testPath,
+          categoryName,
+          categoryDescription: `Examples for ${categoryName}`,
+        };
+      });
 
-        // Find the closing brace of CATEGORIES and insert before it
-        const categoriesEndIndex = categoriesConfigContent.lastIndexOf("};");
-        if (categoriesEndIndex !== -1) {
-          const categoriesBefore = categoriesConfigContent.substring(
-            0,
-            categoriesEndIndex
-          );
-          const categoriesAfter =
-            categoriesConfigContent.substring(categoriesEndIndex);
-          const categoriesNeedsComma =
-            !categoriesBefore.trimEnd().endsWith(",") &&
-            !categoriesBefore.trimEnd().endsWith("{");
-          const categoriesComma = categoriesNeedsComma ? "," : "";
-          categoriesConfigContent =
-            categoriesBefore +
-            categoriesComma +
-            "\n" +
-            categoryEntry +
-            "\n" +
-            categoriesAfter;
-        }
+      // Use the robust updater
+      addExamplesToCategories(categoriesConfigPath, examplesForUpdate);
 
-        // Create README.md for new category in docs directory
+      // Validate the result
+      if (!validateCategoriesConfigSyntax(categoriesConfigPath)) {
+        throw new Error("Generated config failed validation");
+      }
+
+      // Check for new categories and create READMEs
+      for (const [category] of examplesByCategory.entries()) {
         const categoryDocsDir = path.join(rootDir, "docs", category);
         const categoryReadmePath = path.join(categoryDocsDir, "README.md");
-        
+
         if (!fs.existsSync(categoryReadmePath)) {
           // Ensure the directory exists
           if (!fs.existsSync(categoryDocsDir)) {
             fs.mkdirSync(categoryDocsDir, { recursive: true });
           }
-          
+
+          const categoryName =
+            category.charAt(0).toUpperCase() +
+            category.slice(1).replace(/-/g, " ");
+
           // Create README.md with just the title
           const readmeContent = `# ${categoryName}\n`;
           fs.writeFileSync(categoryReadmePath, readmeContent);
           logger.log(`  Created README.md for category: ${category}`);
           newCategories.push(category);
         }
-      } else {
-        // Existing category - add new contracts to it
-        logger.log(
-          `  Adding ${examples.length} example(s) to existing category: ${category}`
-        );
-
-        // Find the category block - look for the category key and its contracts array
-        // We need to find: category: { ... contracts: [ ... ] }
-        // Use a more robust approach: find the contracts array closing bracket
-        // Handle both quoted and unquoted category keys
-        const escapedCategory = category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const categoryStartPattern = new RegExp(
-          `(('${escapedCategory}'|${escapedCategory}):\\s*\\{[^}]*contracts:\\s*\\[)`,
-          "s"
-        );
-        const match = categoriesConfigContent.match(categoryStartPattern);
-
-        if (match) {
-          // Find the matching closing bracket for the contracts array
-          let bracketCount = 0;
-          let inString = false;
-          let stringChar = "";
-          let startPos = match.index! + match[0].length;
-          let endPos = startPos;
-
-          for (let i = startPos; i < categoriesConfigContent.length; i++) {
-            const char = categoriesConfigContent[i];
-
-            if (!inString && (char === '"' || char === "'")) {
-              inString = true;
-              stringChar = char;
-            } else if (
-              inString &&
-              char === stringChar &&
-              categoriesConfigContent[i - 1] !== "\\"
-            ) {
-              inString = false;
-            } else if (!inString) {
-              if (char === "[") bracketCount++;
-              if (char === "]") {
-                bracketCount--;
-                if (bracketCount === 0) {
-                  endPos = i;
-                  break;
-                }
-              }
-            }
-          }
-
-          // Extract existing contracts and add new ones
-          const existingContracts = categoriesConfigContent.substring(
-            startPos,
-            endPos
-          );
-          const newContracts = examples
-            .map((ex) => {
-              return `      {
-        path: '${ex.contractPath}',
-        test: '${ex.testPath}',
-      }`;
-            })
-            .join(",\n");
-
-          // Ensure proper comma separation
-          // Check the last meaningful line to see if it ends with a comma
-          const trimmedExisting = existingContracts.trim();
-          const lines = trimmedExisting
-            .split("\n")
-            .filter((line) => line.trim().length > 0);
-          const lastLine =
-            lines.length > 0 ? lines[lines.length - 1].trim() : "";
-
-          // If there are existing contracts and the last line doesn't end with a comma, add one
-          const needsComma =
-            trimmedExisting.length > 0 && !lastLine.endsWith(",");
-          const comma = needsComma ? ",\n" : "";
-          const updatedContracts =
-            existingContracts + comma + "\n" + newContracts;
-
-          categoriesConfigContent =
-            categoriesConfigContent.substring(0, startPos) +
-            updatedContracts +
-            categoriesConfigContent.substring(endPos);
-        } else {
-          logger.warning(
-            `  Could not find contracts array for category ${category}, skipping update`
-          );
-        }
       }
-    }
 
-    // Validate the config content before writing (basic syntax check)
-    try {
-      // Check for common syntax errors: unquoted keys with hyphens
-      // The pattern [a-z]+-[a-z-]+ only matches unquoted keys (quoted keys have quotes around them)
-      const lines = categoriesConfigContent.split('\n');
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        // Match unquoted category key with hyphens: whitespace + key with hyphen + colon + opening brace
-        // This pattern will NOT match quoted keys like "  'input-proofs': {" because quotes aren't in [a-z-]
-        const unquotedMatch = line.match(/^\s+([a-z]+-[a-z-]+):\s*\{/);
-        if (unquotedMatch) {
-          const key = unquotedMatch[1];
-          logger.error("Generated config contains syntax errors (unquoted keys with hyphens)");
-          logger.error(`Problematic line ${i + 1}: ${line.trim()}`);
-          logger.error(`Key "${key}" must be quoted. Use '${key}' instead of ${key}`);
-          throw new Error("Invalid config syntax generated");
-        }
-      }
-      
-      fs.writeFileSync(categoriesConfigPath, categoriesConfigContent);
       logger.success("Updated categories-config.ts");
     } catch (error: any) {
-      logger.error(`Failed to write categories-config.ts: ${error.message}`);
+      logger.error(`Failed to update categories-config.ts: ${error.message}`);
       logger.warning("Config file was not updated to prevent corruption");
       throw error;
     }
@@ -893,7 +750,9 @@ ${categoryContracts}
 
   // Additional info for failed examples (if any)
   if (failedExamples.length > 0) {
-    logger.info("Please fix the issues with the failed examples and run discover again to add them.");
+    logger.info(
+      "Please fix the issues with the failed examples and run discover again to add them."
+    );
     logger.log("");
   }
 
@@ -905,21 +764,18 @@ ${categoryContracts}
     )}`
   );
   logger.log(`  - Documentation has been generated in the docs/ folder`);
-  
+
   // Remind user to update README.md for new categories
   if (newCategories.length > 0) {
     logger.log("");
     logger.warning(`⚠ New category documentation created:`);
     newCategories.forEach((category) => {
       const categoryName =
-        category.charAt(0).toUpperCase() +
-        category.slice(1).replace(/-/g, " ");
+        category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, " ");
       logger.log(`  - ${kleur.cyan(`docs/${category}/README.md`)}`);
     });
     logger.log("");
-    logger.info(
-      "Please update the README.md file(s) above with:"
-    );
+    logger.info("Please update the README.md file(s) above with:");
     logger.info("  - A description of the category");
     logger.info("  - References to relevant FHEVM documentation");
     logger.info("  - A list of examples with links to their documentation");

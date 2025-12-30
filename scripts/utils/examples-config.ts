@@ -24,19 +24,6 @@ export const EXAMPLES_MAP: Record<string, ExampleConfig> = {
     description: "Shows conditional operations on encrypted values",
     category: "basic",
   },
-  "blind-auction": {
-    contract: "contracts/auctions/BlindAuction.sol",
-    test: "test/blindAuction/BlindAuction.ts",
-    testFixture: "test/blindAuction/BlindAuction.fixture.ts",
-    description: "Sealed-bid auction with confidential bids",
-    category: "auctions",
-  },
-  "confidential-dutch-auction": {
-    contract: "contracts/auctions/ConfidentialDutchAuction.sol",
-    test: "test/confidentialDutchAuction/ConfidentialDutchAuction.ts",
-    description: "Dutch auction with encrypted prices",
-    category: "auctions",
-  },
   "erc7984-example": {
     contract:
       "contracts/openzeppelin-confidential-contracts/ERC7984Example.sol",
@@ -242,5 +229,88 @@ export const EXAMPLES_MAP: Record<string, ExampleConfig> = {
     test: 'test/input-proofs/InputProofErrorHandling.ts',
     description: 'Example: InputProofErrorHandling',
     category: 'input-proofs',
+  },
+
+  'encrypted-dice': {
+    contract: 'contracts/gaming/EncryptedDice.sol',
+    test: 'test/gaming/EncryptedDice.ts',
+    description: 'Example: EncryptedDice',
+    category: 'gaming',
+  },
+  'poker-hand': {
+    contract: 'contracts/gaming/PokerHand.sol',
+    test: 'test/gaming/PokerHand.ts',
+    description: 'Example: PokerHand',
+    category: 'gaming',
+  },
+  'rock-paper-scissors': {
+    contract: 'contracts/gaming/RockPaperScissors.sol',
+    test: 'test/gaming/RockPaperScissors.ts',
+    description: 'Example: RockPaperScissors',
+    category: 'gaming',
+  },
+  'age-verification': {
+    contract: 'contracts/identity/AgeVerification.sol',
+    test: 'test/identity/AgeVerification.ts',
+    description: 'Example: AgeVerification',
+    category: 'identity',
+  },
+  'credit-score-check': {
+    contract: 'contracts/identity/CreditScoreCheck.sol',
+    test: 'test/identity/CreditScoreCheck.ts',
+    description: 'Example: CreditScoreCheck',
+    category: 'identity',
+  },
+  'encrypted-kyc': {
+    contract: 'contracts/identity/EncryptedKYC.sol',
+    test: 'test/identity/EncryptedKYC.ts',
+    description: 'Example: EncryptedKYC',
+    category: 'identity',
+  },
+  'multi-input-validation': {
+    contract: 'contracts/input-proofs/MultiInputValidation.sol',
+    test: 'test/input-proofs/MultiInputValidation.ts',
+    description: 'Example: MultiInputValidation',
+    category: 'input-proofs',
+  },
+
+  'private-lottery': {
+    contract: 'contracts/gaming/PrivateLottery.sol',
+    test: 'test/gaming/PrivateLottery.ts',
+    description: 'Example: PrivateLottery',
+    category: 'gaming',
+  },
+
+  'erc7984example': {
+    contract: 'contracts/openzeppelin/ERC7984Example.sol',
+    test: 'test/openzeppelin/ERC7984Example.ts',
+    description: 'Example: ERC7984Example',
+    category: 'openzeppelin',
+  },
+
+  'vesting-wallet-example': {
+    contract: 'contracts/openzeppelin/VestingWalletExample.sol',
+    test: 'test/openzeppelin/VestingWalletExample.ts',
+    description: '@title VestingWalletExample',
+    category: 'openzeppelin',
+  },
+
+  'erc7984erc20wrapper-example': {
+    contract: 'contracts/openzeppelin/ERC7984ERC20WrapperExample.sol',
+    test: 'test/openzeppelin/ERC7984ERC20WrapperExample.ts',
+    description: 'Example: ERC7984ERC20WrapperExample',
+    category: 'openzeppelin',
+  },
+  'swap-erc7984to-erc20': {
+    contract: 'contracts/openzeppelin/SwapERC7984ToERC20.sol',
+    test: 'test/openzeppelin/SwapERC7984ToERC20.ts',
+    description: 'Example: SwapERC7984ToERC20',
+    category: 'openzeppelin',
+  },
+  'swap-erc7984to-erc7984': {
+    contract: 'contracts/openzeppelin/SwapERC7984ToERC7984.sol',
+    test: 'test/openzeppelin/SwapERC7984ToERC7984.ts',
+    description: 'Example: SwapERC7984ToERC7984',
+    category: 'openzeppelin',
   },
 };

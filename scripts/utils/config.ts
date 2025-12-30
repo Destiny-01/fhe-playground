@@ -7,8 +7,9 @@ export interface ExampleConfig {
   contract: string;
   test: string;
   testFixture?: string;
+  additionalFiles?: string[];
   description: string;
-  category?: string; // Category key (e.g., 'basic', 'auctions')
+  category?: string; // Category key (e.g., 'basic', 'openzeppelin', 'fundamentals')
 }
 
 // Contract item interface for categories

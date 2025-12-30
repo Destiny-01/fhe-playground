@@ -165,7 +165,6 @@ export function discoverExamples(): DiscoveredExample[] {
 export function findNewExamples(): DiscoveredExample[] {
   const discovered = discoverExamples();
   const existingKeys = new Set(Object.keys(EXAMPLES_MAP));
-  console.log(existingKeys);
 
   return discovered.filter((example) => !existingKeys.has(example.exampleKey));
 }

@@ -20,5 +20,8 @@ These examples highlight common pitfalls including incorrect permission setup, g
 
 ## Examples
 
-- **[Gas Limit Pitfalls](gas-limit-pitfalls.md)** - Demonstrates how FHE operations can exceed block gas limits and shows patterns to avoid this issue
 - **[View Function Anti-Pattern](view-function-anti-pattern.md)** - Shows incorrect usage of view functions with encrypted data and explains why it fails
+- **[Gas Limit Pitfalls](gas-limit-pitfalls.md)** - Demonstrates how FHE operations can exceed block gas limits and shows patterns to avoid this issue
+- **[Incorrect Reencryption](incorrect-reencryption.md)** - Common mistakes when reencrypting values and how to properly handle reencryption
+- **[Missing Permission Anti-Pattern](missing-permission-anti-pattern.md)** - Demonstrates what happens when you forget FHE.allowThis() and how to properly set up permissions
+- **[State Management Mistakes](state-management-mistakes.md)** - Common pitfalls when managing encrypted state variables and how to avoid losing permissions

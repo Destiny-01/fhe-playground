@@ -12,6 +12,7 @@ import {
   writeFile,
   removeFile,
   removeFilesMatching,
+  detectDependenciesFromContract,
 } from './files';
 import { ExampleConfig } from './config';
 
@@ -72,6 +73,51 @@ export async function generateExampleFromConfig(
     }
   }
 
+  // Auto-detect common helper contracts from test file
+  const testContent = readFile(testPath);
+  const autoDetectedFiles: string[] = [];
+  
+  // Check if test uses ERC7984Example
+  if (testContent.includes('ERC7984Example') || testContent.includes("'ERC7984Example'") || testContent.includes('"ERC7984Example"')) {
+    const erc7984Path = path.join(rootDir, 'contracts/openzeppelin/ERC7984Example.sol');
+    if (fs.existsSync(erc7984Path)) {
+      autoDetectedFiles.push('contracts/openzeppelin/ERC7984Example.sol');
+    }
+  }
+  
+  // Check if test uses ERC20Mock
+  if (testContent.includes('ERC20Mock') || testContent.includes("'ERC20Mock'") || testContent.includes('"ERC20Mock"')) {
+    const erc20MockPath = path.join(rootDir, 'contracts/openzeppelin/ERC20Mock.sol');
+    if (fs.existsSync(erc20MockPath)) {
+      autoDetectedFiles.push('contracts/openzeppelin/ERC20Mock.sol');
+    }
+  }
+
+  // Combine manually specified and auto-detected files
+  const allAdditionalFiles = [
+    ...(exampleConfig.additionalFiles || []),
+    ...autoDetectedFiles.filter(file => !exampleConfig.additionalFiles?.includes(file))
+  ];
+
+  // Copy additional files if any (e.g., helper contracts needed by tests)
+  if (allAdditionalFiles.length > 0) {
+    for (const additionalFile of allAdditionalFiles) {
+      const sourcePath = path.join(rootDir, additionalFile);
+      if (fs.existsSync(sourcePath)) {
+        // Determine if it's a contract or test file based on path
+        if (additionalFile.startsWith('contracts/')) {
+          const fileName = path.basename(additionalFile);
+          const destPath = path.join(outputDir, 'contracts', fileName);
+          fs.copyFileSync(sourcePath, destPath);
+        } else if (additionalFile.startsWith('test/')) {
+          const fileName = path.basename(additionalFile);
+          const destPath = path.join(outputDir, 'test', fileName);
+          fs.copyFileSync(sourcePath, destPath);
+        }
+      }
+    }
+  }
+
   // Step 4: Update configuration files
   const deployScript = `import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -94,12 +140,26 @@ func.tags = ["${contractName}"];
 
   writeFile(path.join(outputDir, 'deploy', 'deploy.ts'), deployScript);
 
+  // Detect dependencies from contract
+  const dependencies = detectDependenciesFromContract(contractPath);
+
   // Update package.json
   const packageJsonPath = path.join(outputDir, 'package.json');
   const packageJson = JSON.parse(readFile(packageJsonPath));
   packageJson.name = `fhevm-example-${exampleKey}`;
   packageJson.description = exampleConfig.description;
   packageJson.homepage = `https://github.com/zama-ai/fhevm-examples/${exampleKey}`;
+  
+  // Add detected dependencies
+  if (dependencies.size > 0) {
+    if (!packageJson.dependencies) {
+      packageJson.dependencies = {};
+    }
+    dependencies.forEach((version, packageName) => {
+      packageJson.dependencies[packageName] = version;
+    });
+  }
+  
   writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
 
   // Generate README
@@ -225,11 +285,17 @@ This project is licensed under the BSD-3-Clause-Clear License.
       /\.\/tasks\/FHECounter/g,
       `./tasks/${contractName}`
     );
-    // Update Solidity version to match contracts (0.8.24 instead of 0.8.27)
-    configContent = configContent.replace(
-      /version: "0\.8\.\d+"/,
-      'version: "0.8.24"'
-    );
+    // Detect Solidity version from contract file and update hardhat config
+    const contractContent = readFile(contractPath);
+    const pragmaMatch = contractContent.match(/pragma\s+solidity\s+(\^?0\.8\.\d+)/);
+    if (pragmaMatch) {
+      const contractVersion = pragmaMatch[1].replace('^', '');
+      // Update Solidity version to match contract's pragma
+      configContent = configContent.replace(
+        /version: "0\.8\.\d+"/,
+        `version: "${contractVersion}"`
+      );
+    }
     writeFile(hardhatConfigPath, configContent);
   }
 }

@@ -14,18 +14,18 @@ import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 contract CreditScoreCheck is ZamaEthereumConfig {
     // Mapping from user address to their encrypted credit score
     mapping(address => euint16) private _creditScores;
-    
+
     // Mapping from user address to encrypted qualification results for each tier
     mapping(address => ebool) private _excellentResults;
     mapping(address => ebool) private _goodResults;
     mapping(address => ebool) private _fairResults;
     mapping(address => ebool) private _minimumResults;
-    
+
     // Credit score thresholds for different tiers
     uint16 public constant EXCELLENT_THRESHOLD = 750; // Excellent credit
-    uint16 public constant GOOD_THRESHOLD = 700;      // Good credit
-    uint16 public constant FAIR_THRESHOLD = 650;     // Fair credit
-    uint16 public constant MINIMUM_THRESHOLD = 600;  // Minimum acceptable
+    uint16 public constant GOOD_THRESHOLD = 700; // Good credit
+    uint16 public constant FAIR_THRESHOLD = 650; // Fair credit
+    uint16 public constant MINIMUM_THRESHOLD = 600; // Minimum acceptable
 
     // solhint-disable-next-line no-empty-blocks
     constructor() {}
@@ -41,28 +41,28 @@ contract CreditScoreCheck is ZamaEthereumConfig {
         euint16 score = FHE.fromExternal(encryptedScore, inputProof);
         FHE.allowThis(score);
         _creditScores[msg.sender] = score;
-        
+
         // Compute all tier qualifications
         euint16 excellentThreshold = FHE.asEuint16(EXCELLENT_THRESHOLD);
-        ebool excellent = FHE.gte(score, excellentThreshold);
+        ebool excellent = FHE.ge(score, excellentThreshold);
         FHE.allowThis(excellent);
         FHE.allow(excellent, msg.sender);
         _excellentResults[msg.sender] = excellent;
-        
+
         euint16 goodThreshold = FHE.asEuint16(GOOD_THRESHOLD);
-        ebool good = FHE.gte(score, goodThreshold);
+        ebool good = FHE.ge(score, goodThreshold);
         FHE.allowThis(good);
         FHE.allow(good, msg.sender);
         _goodResults[msg.sender] = good;
-        
+
         euint16 fairThreshold = FHE.asEuint16(FAIR_THRESHOLD);
-        ebool fair = FHE.gte(score, fairThreshold);
+        ebool fair = FHE.ge(score, fairThreshold);
         FHE.allowThis(fair);
         FHE.allow(fair, msg.sender);
         _fairResults[msg.sender] = fair;
-        
+
         euint16 minimumThreshold = FHE.asEuint16(MINIMUM_THRESHOLD);
-        ebool minimum = FHE.gte(score, minimumThreshold);
+        ebool minimum = FHE.ge(score, minimumThreshold);
         FHE.allowThis(minimum);
         FHE.allow(minimum, msg.sender);
         _minimumResults[msg.sender] = minimum;
@@ -92,7 +92,9 @@ contract CreditScoreCheck is ZamaEthereumConfig {
     /// @dev Get encrypted result for minimum credit requirement
     /// @param user The address of the user to check
     /// @return Encrypted boolean (true if credit score >= 600)
-    function meetsMinimumRequirement(address user) external view returns (ebool) {
+    function meetsMinimumRequirement(
+        address user
+    ) external view returns (ebool) {
         return _minimumResults[user];
     }
 
@@ -103,4 +105,3 @@ contract CreditScoreCheck is ZamaEthereumConfig {
         return _creditScores[user];
     }
 }
-

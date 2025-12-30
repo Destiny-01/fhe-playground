@@ -4,7 +4,7 @@ Welcome to the FHEVM Examples documentation! This collection provides comprehens
 
 ## What is FHEVM?
 
-FHEVM enables developers to perform computations on encrypted data without ever decrypting it. This revolutionary technology allows smart contracts to process sensitive information while maintaining complete privacy, opening up new possibilities for confidential DeFi, private voting systems, encrypted auctions, and more.
+FHEVM enables developers to perform computations on encrypted data without ever decrypting it. This revolutionary technology allows smart contracts to process sensitive information while maintaining complete privacy, opening up new possibilities for confidential DeFi, private voting systems, and more.
 
 ## About This Documentation
 
@@ -117,12 +117,29 @@ Input proof concepts and error handling:
 
 - **Input Proof Basics** - Basic input proof concepts
 - **Input Proof Error Handling** - Error handling patterns
+- **Multi-Input Validation** - Validating multiple encrypted inputs
+
+### 🎮 Gaming Examples
+
+Provably fair gaming applications:
+
+- **Rock Paper Scissors** - Commit-reveal game mechanics
+- **Encrypted Dice** - Provably fair randomness
+- **Poker Hand** - Card game evaluation with encrypted cards
+- **Private Lottery** - Encrypted lottery systems
+
+### 🆔 Identity Examples
+
+Privacy-preserving identity verification:
+
+- **Age Verification** - Age checks without revealing exact age
+- **Credit Score Check** - Threshold-based credit verification
+- **Encrypted KYC** - Know Your Customer with encrypted data
 
 ### 🎯 Advanced Examples
 
 More complex use cases:
 
-- **Auctions** - Confidential bidding and price discovery
 - **OpenZeppelin Integration** - ERC7984 and confidential tokens
 
 ## Features
@@ -176,6 +193,8 @@ Each example documentation page follows this structure:
 - [Decryption](decrypt/README.md) - Decryption mechanisms
 - [Anti-Patterns](anti-patterns/README.md) - Common mistakes to avoid
 - [Input Proofs](input-proofs/README.md) - Input proof concepts
+- [Gaming](gaming/README.md) - Provably fair gaming applications
+- [Identity](identity/README.md) - Privacy-preserving identity verification
 - [OpenZeppelin](openzeppelin/README.md) - OpenZeppelin integration examples
 
 See [SUMMARY.md](SUMMARY.md) for a complete list of all examples.

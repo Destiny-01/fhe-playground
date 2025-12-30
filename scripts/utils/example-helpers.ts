@@ -47,7 +47,6 @@ export function getExamplesByCategory(): Record<string, string[]> {
  */
 function inferCategoryFromPath(contractPath: string): string | null {
   if (contractPath.includes('/basic/')) return 'basic';
-  if (contractPath.includes('/auctions/')) return 'auctions';
   if (contractPath.includes('/openzeppelin')) return 'openzeppelin';
   if (contractPath.includes('/fheWordle/')) return 'games';
   return null;

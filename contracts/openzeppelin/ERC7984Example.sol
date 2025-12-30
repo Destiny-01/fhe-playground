@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause-Clear
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.27;
 
 import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {FHE, externalEuint64, euint64} from "@fhevm/solidity/lib/FHE.sol";
 import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
-import {ERC7984} from "@openzeppelin/confidential-contracts/token/ERC7984.sol";
+import {ERC7984} from "@openzeppelin/confidential-contracts/token/ERC7984/ERC7984.sol";
 
 contract ERC7984Example is ZamaEthereumConfig, ERC7984, Ownable2Step {
     constructor(
@@ -18,4 +18,3 @@ contract ERC7984Example is ZamaEthereumConfig, ERC7984, Ownable2Step {
         _mint(owner, encryptedAmount);
     }
 }
-

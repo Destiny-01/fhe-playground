@@ -13,23 +13,23 @@ import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 contract EncryptedKYC is ZamaEthereumConfig {
     /// @dev Structure to hold encrypted KYC attributes
     struct KYCData {
-        euint8 age;                    // User's age
-        euint8 residencyStatus;         // 0 = non-resident, 1 = resident
-        euint32 accountBalance;         // Account balance in smallest unit
-        bool verified;                 // Whether KYC has been verified by an authority
+        euint8 age; // User's age
+        euint8 residencyStatus; // 0 = non-resident, 1 = resident
+        euint32 accountBalance; // Account balance in smallest unit
+        bool verified; // Whether KYC has been verified by an authority
     }
 
     // Mapping from user address to their encrypted KYC data
     mapping(address => KYCData) private _kycData;
-    
+
     // Mapping from user address to encrypted verification results
     mapping(address => ebool) private _ageResults;
     mapping(address => ebool) private _residencyResults;
     mapping(address => ebool) private _balanceResults;
-    
+
     // Minimum age requirement for KYC
     uint8 public constant MINIMUM_AGE = 18;
-    
+
     // Minimum account balance threshold (in smallest unit, e.g., cents)
     uint32 public constant MINIMUM_BALANCE = 10000; // e.g., $100.00
 
@@ -54,37 +54,37 @@ contract EncryptedKYC is ZamaEthereumConfig {
     ) external {
         euint8 age = FHE.fromExternal(encryptedAge, ageProof);
         FHE.allowThis(age);
-        
+
         euint8 residency = FHE.fromExternal(encryptedResidency, residencyProof);
         FHE.allowThis(residency);
-        
+
         euint32 balance = FHE.fromExternal(encryptedBalance, balanceProof);
         FHE.allowThis(balance);
-        
+
         _kycData[msg.sender] = KYCData({
             age: age,
             residencyStatus: residency,
             accountBalance: balance,
             verified: false
         });
-        
+
         // Compute age requirement result
         euint8 minAge = FHE.asEuint8(MINIMUM_AGE);
-        ebool meetsAge = FHE.gte(age, minAge);
+        ebool meetsAge = FHE.ge(age, minAge);
         FHE.allowThis(meetsAge);
         FHE.allow(meetsAge, msg.sender);
         _ageResults[msg.sender] = meetsAge;
-        
+
         // Compute residency result
         euint8 one = FHE.asEuint8(1);
-        ebool isResident = FHE.eq(residency, one);
-        FHE.allowThis(isResident);
-        FHE.allow(isResident, msg.sender);
-        _residencyResults[msg.sender] = isResident;
-        
+        ebool isCurrResident = FHE.eq(residency, one);
+        FHE.allowThis(isCurrResident);
+        FHE.allow(isCurrResident, msg.sender);
+        _residencyResults[msg.sender] = isCurrResident;
+
         // Compute balance requirement result
         euint32 minBalance = FHE.asEuint32(MINIMUM_BALANCE);
-        ebool meetsBalance = FHE.gte(balance, minBalance);
+        ebool meetsBalance = FHE.ge(balance, minBalance);
         FHE.allowThis(meetsBalance);
         FHE.allow(meetsBalance, msg.sender);
         _balanceResults[msg.sender] = meetsBalance;
@@ -116,7 +116,9 @@ contract EncryptedKYC is ZamaEthereumConfig {
     /// @dev Get encrypted result for balance requirement check
     /// @param user The address of the user to check
     /// @return Encrypted boolean (true if accountBalance >= MINIMUM_BALANCE)
-    function meetsBalanceRequirement(address user) external view returns (ebool) {
+    function meetsBalanceRequirement(
+        address user
+    ) external view returns (ebool) {
         return _balanceResults[user];
     }
 
@@ -133,14 +135,24 @@ contract EncryptedKYC is ZamaEthereumConfig {
     /// @return residencyStatus The encrypted residency status
     /// @return accountBalance The encrypted account balance
     /// @return verified Whether KYC has been verified
-    function getKYCData(address user) external view returns (
-        euint8 age,
-        euint8 residencyStatus,
-        euint32 accountBalance,
-        bool verified
-    ) {
+    function getKYCData(
+        address user
+    )
+        external
+        view
+        returns (
+            euint8 age,
+            euint8 residencyStatus,
+            euint32 accountBalance,
+            bool verified
+        )
+    {
         KYCData memory data = _kycData[user];
-        return (data.age, data.residencyStatus, data.accountBalance, data.verified);
+        return (
+            data.age,
+            data.residencyStatus,
+            data.accountBalance,
+            data.verified
+        );
     }
 }
-

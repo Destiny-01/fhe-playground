@@ -46,7 +46,8 @@ contract PrivateLottery is ZamaEthereumConfig {
     mapping(uint256 roundId => LotteryRound round) public rounds;
 
     /// @notice Mapping from (roundId, ticketId) to ticket data
-    mapping(uint256 roundId => mapping(uint256 ticketId => Ticket ticket)) public tickets;
+    mapping(uint256 roundId => mapping(uint256 ticketId => Ticket ticket))
+        public tickets;
 
     /// @notice Mapping from round ID to ticket count
     mapping(uint256 roundId => uint256) public ticketCounts;
@@ -59,12 +60,19 @@ contract PrivateLottery is ZamaEthereumConfig {
     /// @param roundId The ID of the lottery round
     /// @param ticketId The ID of the ticket
     /// @param player The address that purchased the ticket
-    event TicketPurchased(uint256 indexed roundId, uint256 indexed ticketId, address indexed player);
+    event TicketPurchased(
+        uint256 indexed roundId,
+        uint256 indexed ticketId,
+        address indexed player
+    );
 
     /// @notice Emitted when the winning number is drawn
     /// @param roundId The ID of the lottery round
     /// @param encryptedWinningNumber The encrypted winning number
-    event WinningNumberDrawn(uint256 indexed roundId, euint8 encryptedWinningNumber);
+    event WinningNumberDrawn(
+        uint256 indexed roundId,
+        euint8 encryptedWinningNumber
+    );
 
     /// @notice Emitted when the winning number is revealed
     /// @param roundId The ID of the lottery round
@@ -100,9 +108,15 @@ contract PrivateLottery is ZamaEthereumConfig {
         bytes calldata inputProof
     ) external returns (uint256) {
         require(!rounds[roundId].closed, "Lottery round is closed");
-        require(!rounds[roundId].winningNumberDrawn, "Winning number already drawn");
+        require(
+            !rounds[roundId].winningNumberDrawn,
+            "Winning number already drawn"
+        );
 
-        euint8 ticketNumber = FHE.fromExternal(encryptedTicketNumber, inputProof);
+        euint8 ticketNumber = FHE.fromExternal(
+            encryptedTicketNumber,
+            inputProof
+        );
         FHE.allowThis(ticketNumber);
         FHE.allow(ticketNumber, msg.sender);
 
@@ -125,7 +139,10 @@ contract PrivateLottery is ZamaEthereumConfig {
     /// @notice This function generates a random encrypted winning number and makes it publicly decryptable
     function drawWinningNumber(uint256 roundId) external {
         require(!rounds[roundId].closed, "Lottery round is closed");
-        require(!rounds[roundId].winningNumberDrawn, "Winning number already drawn");
+        require(
+            !rounds[roundId].winningNumberDrawn,
+            "Winning number already drawn"
+        );
         require(ticketCounts[roundId] > 0, "No tickets purchased");
 
         // Generate encrypted random winning number
@@ -135,6 +152,7 @@ contract PrivateLottery is ZamaEthereumConfig {
         rounds[roundId].winningNumberDrawn = true;
 
         // Make the winning number publicly decryptable for provable fairness
+        FHE.allowThis(rounds[roundId].encryptedWinningNumber);
         FHE.makePubliclyDecryptable(randomWinning);
 
         emit WinningNumberDrawn(roundId, randomWinning);
@@ -144,15 +162,27 @@ contract PrivateLottery is ZamaEthereumConfig {
     /// @param roundId The ID of the lottery round
     /// @notice This function compares each ticket's encrypted number with the encrypted winning number
     function computeWinners(uint256 roundId) external {
-        require(rounds[roundId].winningNumberDrawn, "Winning number not yet drawn");
+        require(
+            rounds[roundId].winningNumberDrawn,
+            "Winning number not yet drawn"
+        );
 
         euint8 winningNumber = rounds[roundId].encryptedWinningNumber;
+        // Allow the contract to use the winning number for comparisons
+        FHE.allowThis(winningNumber);
+
         uint256 count = ticketCounts[roundId];
 
         for (uint256 i = 0; i < count; i++) {
             if (!tickets[roundId][i].winnerComputed) {
+                // Allow the contract to use the ticket number for comparison
+                FHE.allowThis(tickets[roundId][i].encryptedTicketNumber);
+
                 // Compare encrypted ticket number with encrypted winning number
-                ebool isMatch = FHE.eq(tickets[roundId][i].encryptedTicketNumber, winningNumber);
+                ebool isMatch = FHE.eq(
+                    tickets[roundId][i].encryptedTicketNumber,
+                    winningNumber
+                );
                 FHE.allowThis(isMatch);
                 FHE.allow(isMatch, tickets[roundId][i].player);
 
@@ -173,8 +203,14 @@ contract PrivateLottery is ZamaEthereumConfig {
         bytes memory abiEncodedClearWinningNumber,
         bytes memory decryptionProof
     ) external {
-        require(rounds[roundId].winningNumberDrawn, "Winning number not yet drawn");
-        require(!rounds[roundId].winningNumberRevealed, "Winning number already revealed");
+        require(
+            rounds[roundId].winningNumberDrawn,
+            "Winning number not yet drawn"
+        );
+        require(
+            !rounds[roundId].winningNumberRevealed,
+            "Winning number already revealed"
+        );
 
         bytes32[] memory cts = new bytes32[](1);
         cts[0] = FHE.toBytes32(rounds[roundId].encryptedWinningNumber);
@@ -183,7 +219,10 @@ contract PrivateLottery is ZamaEthereumConfig {
         FHE.checkSignatures(cts, abiEncodedClearWinningNumber, decryptionProof);
 
         // Decode the clear winning number
-        uint8 decodedWinning = abi.decode(abiEncodedClearWinningNumber, (uint8));
+        uint8 decodedWinning = abi.decode(
+            abiEncodedClearWinningNumber,
+            (uint8)
+        );
 
         // Constrain to valid ticket range
         uint8 winningNumber = decodedWinning % (MAX_TICKET_NUMBER + 1);
@@ -197,7 +236,9 @@ contract PrivateLottery is ZamaEthereumConfig {
     /// @notice Returns the encrypted winning number
     /// @param roundId The ID of the lottery round
     /// @return The encrypted winning number
-    function getEncryptedWinningNumber(uint256 roundId) external view returns (euint8) {
+    function getEncryptedWinningNumber(
+        uint256 roundId
+    ) external view returns (euint8) {
         return rounds[roundId].encryptedWinningNumber;
     }
 
@@ -205,7 +246,10 @@ contract PrivateLottery is ZamaEthereumConfig {
     /// @param roundId The ID of the lottery round
     /// @return The clear winning number
     function getWinningNumber(uint256 roundId) external view returns (uint8) {
-        require(rounds[roundId].winningNumberRevealed, "Winning number not yet revealed");
+        require(
+            rounds[roundId].winningNumberRevealed,
+            "Winning number not yet revealed"
+        );
         return rounds[roundId].winningNumber;
     }
 
@@ -213,7 +257,10 @@ contract PrivateLottery is ZamaEthereumConfig {
     /// @param roundId The ID of the lottery round
     /// @param ticketId The ID of the ticket
     /// @return The encrypted ticket number
-    function getEncryptedTicketNumber(uint256 roundId, uint256 ticketId) external view returns (euint8) {
+    function getEncryptedTicketNumber(
+        uint256 roundId,
+        uint256 ticketId
+    ) external view returns (euint8) {
         return tickets[roundId][ticketId].encryptedTicketNumber;
     }
 
@@ -221,8 +268,14 @@ contract PrivateLottery is ZamaEthereumConfig {
     /// @param roundId The ID of the lottery round
     /// @param ticketId The ID of the ticket
     /// @return The encrypted boolean indicating if the ticket is a winner
-    function getEncryptedWinnerStatus(uint256 roundId, uint256 ticketId) external view returns (ebool) {
-        require(tickets[roundId][ticketId].winnerComputed, "Winner status not yet computed");
+    function getEncryptedWinnerStatus(
+        uint256 roundId,
+        uint256 ticketId
+    ) external view returns (ebool) {
+        require(
+            tickets[roundId][ticketId].winnerComputed,
+            "Winner status not yet computed"
+        );
         return tickets[roundId][ticketId].isWinner;
     }
 
@@ -233,4 +286,3 @@ contract PrivateLottery is ZamaEthereumConfig {
         return ticketCounts[roundId];
     }
 }
-

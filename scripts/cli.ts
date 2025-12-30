@@ -25,6 +25,7 @@ import { generateAllExamples, generateAllCategories } from './tasks/batch';
 import { validateAll } from './tasks/validate';
 import { listExamples, listCategories, getExamplesForCategory, getExamplesBySubcategory } from './utils/example-helpers';
 import { EXAMPLES_MAP } from './utils/examples-config';
+import { validateCategoriesConfigOrExit } from './utils/validate-config';
 import { CATEGORIES } from './utils/categories-config';
 import { EXAMPLES_CONFIG } from './utils/docs-config';
 import { isHardhatProject, getHardhatConfigPath, addFhevmDependencies, addFhevmPlugin } from './utils/project-setup';
@@ -54,6 +55,11 @@ function showHelp(): void {
   logger.dim('  --target <dir> Inject into existing Hardhat project (use . for current directory)');
   logger.dim('  --override    Automatically override existing output directory');
   logger.dim('  --install     Install dependencies and run tests after creation');
+  logger.log('');
+  logger.log('Dependency Management:');
+  logger.dim('  External npm packages are automatically detected from contract imports.');
+  logger.dim('  Configure versions in package.json → dependencyVersions field.');
+  logger.dim('  See README.md for details.');
   logger.log('');
 }
 
@@ -770,6 +776,9 @@ async function handleDirectCommand(rawArgs: string[]): Promise<void> {
  * Main entry point
  */
 async function main(): Promise<void> {
+  // Validate categories config before proceeding (prevents TypeScript compilation errors)
+  validateCategoriesConfigOrExit();
+
   const args = process.argv.slice(2);
 
   // If no arguments, show interactive menu

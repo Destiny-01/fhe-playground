@@ -41,12 +41,14 @@ These examples provide the foundation for building more complex privacy-preservi
 
 ### Arithmetic Operations
 
-- **[FHE Multiply](fhe-operations/fhemultiply.md)** - Multiplies two encrypted values
+- **FHE Addition** - Addition operations on encrypted values (demonstrated in template FHECounter and throughout examples)
 - **[FHE Subtract](fhe-operations/fhesubtract.md)** - Subtracts one encrypted value from another
+- **[FHE Multiply](fhe-operations/fhemultiply.md)** - Multiplies two encrypted values
 
 ### Conditionals
 
 - **[FHE Select](fhe-conditionals/fheselect.md)** - Selects between two encrypted values based on an encrypted condition
+- **FHE If-Then-Else** - Conditional operations on encrypted values (demonstrated in various examples)
 
 ### Permissions
 

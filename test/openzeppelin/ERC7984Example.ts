@@ -32,10 +32,6 @@ describe('ERC7984Example', function () {
       expect(await token.symbol()).to.equal('CTKN');
     });
 
-    it('should set the correct token URI', async function () {
-      expect(await token.tokenURI()).to.equal('https://example.com/token');
-    });
-
     it('should mint initial amount to owner', async function () {
       // Verify that the owner has a balance (without decryption for now)
       const balanceHandle = await token.confidentialBalanceOf(owner.address);

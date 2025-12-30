@@ -2,6 +2,26 @@
 
 A comprehensive, production-ready system for creating, managing, and distributing standalone FHEVM (Fully Homomorphic Encryption Virtual Machine) example repositories with automated documentation generation. Built with TypeScript, featuring a powerful CLI and full automation suite.
 
+## 🚀 Quick Start with npx
+
+**Available on npm!** Use directly without installation:
+
+```bash
+# Interactive mode
+npx fhe-playground
+
+# Create an example
+npx fhe-playground example fhe-counter ./my-counter
+
+# Create a category project
+npx fhe-playground category fundamentals ./my-fundamentals
+
+# List all examples
+npx fhe-playground list examples
+```
+
+[Full documentation below ↓](#-quick-start)
+
 ---
 
 ## 📋 Overview
@@ -21,10 +41,11 @@ Every example in this repository has been tested, validated, and verified to wor
 ## ✨ Key Features
 
 ### 🎯 **Comprehensive Example Library**
-- **40+ verified examples** across 7 categories
+- **40+ verified examples** across 9 categories
 - All examples compile and pass tests
 - Covers fundamentals to advanced use cases
 - Includes anti-patterns to help developers avoid common mistakes
+- Gaming and identity verification examples
 
 ### 🚀 **Powerful CLI**
 - Interactive mode for easy navigation
@@ -62,16 +83,75 @@ Generate complete projects with multiple related examples:
 
 ### Installation
 
+#### Option 1: Use via npx (Recommended - No Installation Required)
+
+The easiest way to use `fhe-playground` is via `npx`, which doesn't require any installation:
+
+```bash
+# Interactive mode
+npx fhe-playground
+
+# Create an example
+npx fhe-playground example <example-name> [output-dir]
+
+# Create a category project
+npx fhe-playground category <category> [output-dir]
+
+# Generate documentation
+npx fhe-playground docs <example-name>
+npx fhe-playground docs --all
+
+# List available examples
+npx fhe-playground list examples
+
+# List available categories
+npx fhe-playground list categories
+
+# Discover new examples
+npx fhe-playground discover
+
+# Validate generated examples
+npx fhe-playground validate
+
+# Refresh examples
+npx fhe-playground refresh [example-name]
+
+# Batch operations
+npx fhe-playground batch examples
+npx fhe-playground batch categories
+```
+
+**Options:**
+- `--target <dir>` - Inject into existing Hardhat project (use `.` for current directory)
+- `--override` - Automatically override existing output directory
+- `--install` - Install dependencies and run tests after creation
+
+#### Option 2: Install Globally
+
+```bash
+npm install -g fhe-playground
+
+# Then use directly
+fhe-playground
+fhe-playground example <name>
+```
+
+#### Option 3: Clone and Develop
+
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd example-hub
+git clone https://github.com/Destiny-01/fhe-playground.git
+cd fhe-playground
 
 # Install dependencies
 npm install
 
 # Build the project
 npm run build
+
+# Use via npm scripts
+npm run cli
+npm run create-example <name>
 ```
 
 ### Using the CLI
@@ -79,7 +159,11 @@ npm run build
 #### Interactive Mode (Recommended)
 
 ```bash
-npm run cli
+# Via npx (no installation)
+npx fhe-playground
+
+# Or if installed globally
+fhe-playground
 ```
 
 This launches an interactive menu where you can:
@@ -93,73 +177,74 @@ This launches an interactive menu where you can:
 
 **Create a standalone example:**
 ```bash
-# Via npm script
-npm run create-example <example-name> [output-dir]
-
-# Via CLI
-npm run cli example <example-name> [output-dir]
+# Via npx (recommended)
+npx fhe-playground example <example-name> [output-dir]
 
 # Example
-npm run cli example fhe-counter ./my-counter
+npx fhe-playground example fhe-counter ./my-counter
+
+# With options
+npx fhe-playground example fhe-counter ./my-counter --target . --install
 ```
 
 **Create a category project:**
 ```bash
-# Via npm script
-npm run create-category <category> [output-dir]
-
-# Via CLI
-npm run cli category <category> [output-dir]
+# Via npx
+npx fhe-playground category <category> [output-dir]
 
 # Example
-npm run cli category fundamentals ./my-fundamentals
+npx fhe-playground category fundamentals ./my-fundamentals
 ```
 
 **Generate documentation:**
 ```bash
 # Single example
-npm run generate-docs <example-name>
+npx fhe-playground docs <example-name>
 
 # All examples
-npm run generate-all-docs
-
-# Via CLI
-npm run cli docs <example-name>
-npm run cli docs --all
+npx fhe-playground docs --all
 ```
 
 **Inject into existing Hardhat project:**
 ```bash
-npm run cli example <example-name> --target <project-dir>
+npx fhe-playground example <example-name> --target <project-dir>
 
 # Example: inject into current directory
-npm run cli example fhe-counter --target .
+npx fhe-playground example fhe-counter --target .
 ```
 
 ### Other Useful Commands
 
 ```bash
 # List all available examples
-npm run cli list examples
+npx fhe-playground list examples
 
 # List all available categories
-npm run cli list categories
+npx fhe-playground list categories
 
 # Discover new examples
-npm run discover
+npx fhe-playground discover
 
 # Validate all generated examples
-npm run validate
+npx fhe-playground validate
 
 # Refresh examples with updated template
-npm run refresh [example-name]
+npx fhe-playground refresh [example-name]
 
 # Batch generate all examples
-npm run cli batch examples
+npx fhe-playground batch examples
 
 # Batch generate all categories
-npm run cli batch categories
+npx fhe-playground batch categories
 ```
+
+### Command Options
+
+All commands support the following options:
+
+- `--target <dir>` - Inject into existing Hardhat project (use `.` for current directory)
+- `--override` - Automatically override existing output directory without prompting
+- `--install` - Install dependencies and run tests after creation
 
 ---
 
@@ -227,15 +312,31 @@ Learn from common mistakes:
 
 - **input-proof-basics** - Basic input proof concepts
 - **input-proof-error-handling** - Error handling for input proofs
+- **multi-input-validation** - Validating multiple encrypted inputs in a single operation
+
+### 🎮 Gaming Examples
+
+Provably fair gaming applications:
+- **rock-paper-scissors** - Commit-reveal Rock-Paper-Scissors game
+- **encrypted-dice** - Provably fair dice rolling
+- **poker-hand** - Poker hand evaluation with encrypted cards
+- **private-lottery** - Private lottery with encrypted tickets
+
+### 🆔 Identity Examples
+
+Privacy-preserving identity verification:
+- **age-verification** - Verify age requirements without revealing exact age
+- **credit-score-check** - Check credit scores against thresholds privately
+- **encrypted-kyc** - Know Your Customer verification with encrypted data
 
 ### 🎯 Advanced Examples
 
-#### Auctions
-- **blind-auction** - Sealed-bid auction with confidential bids
-- **confidential-dutch-auction** - Dutch auction with encrypted prices
-
 #### OpenZeppelin Integration
 - **erc7984-example** - ERC7984 confidential token standard implementation
+- **erc7984-erc20-wrapper** - Convert between confidential and public token standards
+- **swap-erc7984-to-erc20** - Cross-standard token swapping
+- **swap-erc7984-to-erc7984** - Confidential token-to-token swapping
+- **vesting-wallet** - Confidential token vesting mechanisms
 
 ---
 
@@ -278,26 +379,49 @@ test/<category>/YourExample.ts
 - Add explanatory comments for complex test scenarios
 - Test edge cases and error conditions
 
-### Step 3: Test Locally
+### Step 3: Configure External Dependencies (If Needed)
 
-Test your contract and tests in the base template:
+If your contract uses external npm packages (like OpenZeppelin contracts), you need to configure their versions in `package.json`:
 
-```bash
-cd fhevm-hardhat-template/
+**Edit `package.json` and add a `dependencyVersions` field:**
 
-# Copy your files temporarily
-cp ../contracts/<category>/YourExample.sol contracts/
-cp ../test/<category>/YourExample.ts test/
-
-# Run tests
-npm run compile
-npm run test
-
-# Clean up
-rm contracts/YourExample.sol test/YourExample.ts
+```json
+{
+  "dependencyVersions": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/confidential-contracts": "^0.3.0",
+    "@fhevm/solidity": "^0.9.1",
+    "@your-package/name": "^1.0.0"  // Add your package here
+  }
+}
 ```
 
-### Step 4: Run Discovery
+**How it works:**
+- The system automatically detects npm-scoped packages (starting with `@`) from your contract's import statements
+- It looks up the version from `dependencyVersions` in `package.json`
+- If a package is used but not configured, you'll get a warning and it will use `'latest'` as fallback
+- **Always configure versions** to ensure reproducible builds
+
+**Example contract with external dependencies:**
+```solidity
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+```
+
+The system will automatically detect `@openzeppelin/contracts` and use the version specified in `dependencyVersions`.
+
+### Step 4: Verify Your Contract Works
+
+Before running discovery, verify that your contract compiles and your tests pass. Simply ensure your contract is in the `contracts/<category>/` directory and your test is in the `test/<category>/` directory. The discovery tool will automatically test it for you.
+
+If you want to verify manually, you can check that:
+- Your contract file is valid Solidity
+- Your test file is valid TypeScript
+- Both files follow the naming conventions
+
+**Note:** The discovery tool will automatically test your example - you don't need to manually test it. Just make sure the files are in the correct locations.
+
+### Step 5: Run Discovery
 
 Use the discovery tool to automatically detect and configure your example:
 
@@ -314,7 +438,7 @@ The discovery tool will:
 
 **Note:** Only examples that compile and pass tests will be added to the configuration.
 
-### Step 5: Verify Configuration
+### Step 6: Verify Configuration
 
 Check that your example was added correctly:
 
@@ -326,7 +450,7 @@ npm run cli list examples
 npm run cli example <your-example-name> ./test-output
 ```
 
-### Step 6: Create Pull Request
+### Step 7: Create Pull Request
 
 Once your example is discovered, configured, and verified:
 
@@ -348,6 +472,7 @@ Once your example is discovered, configured, and verified:
 3. **PR Checklist:**
    - ✅ Example compiles successfully
    - ✅ All tests pass
+   - ✅ External dependencies configured in `dependencyVersions` (if any)
    - ✅ Discover command ran successfully
    - ✅ Documentation was generated
    - ✅ Example appears in list
@@ -355,6 +480,57 @@ Once your example is discovered, configured, and verified:
 ---
 
 ## 🔧 Maintenance
+
+### Managing External Dependencies
+
+The system automatically detects and manages external npm package dependencies used in contracts.
+
+#### How Dependency Detection Works
+
+1. **Automatic Detection**: When generating examples or categories, the system scans all contract import statements
+2. **Package Extraction**: It extracts npm-scoped package names (e.g., `@openzeppelin/contracts` from `@openzeppelin/contracts/token/ERC20/ERC20.sol`)
+3. **Version Lookup**: It looks up the version from `dependencyVersions` in the root `package.json`
+4. **Auto-Installation**: Detected dependencies are automatically added to generated projects' `package.json`
+
+#### Configuring Dependency Versions
+
+Edit the root `package.json` and add/update the `dependencyVersions` field:
+
+```json
+{
+  "dependencyVersions": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/confidential-contracts": "^0.3.0",
+    "@fhevm/solidity": "^0.9.1",
+    "@your-package/name": "^1.0.0"
+  }
+}
+```
+
+#### Updating Dependency Versions
+
+To update a dependency version:
+
+1. Edit `package.json` → `dependencyVersions`
+2. Update the version string (e.g., `^5.0.0` → `^5.1.0`)
+3. Regenerate examples if needed:
+   ```bash
+   npm run refresh <example-name>
+   ```
+
+#### Troubleshooting
+
+**Warning: Package not configured**
+```
+Package "@your-package/name" detected but not configured in package.json dependencyVersions.
+```
+
+**Solution**: Add the package to `dependencyVersions` in `package.json` with the desired version.
+
+**Package installation fails**
+- Check that the version exists on npm
+- Verify the version string format (e.g., `^1.0.0`, `~1.0.0`, `1.0.0`)
+- Ensure the package name matches exactly (case-sensitive)
 
 ### Updating Project Dependencies
 
@@ -380,35 +556,19 @@ npm run refresh <category-name>
 2. Regenerates all examples with the updated template
 3. Preserves your generated examples with latest changes
 
-#### Manual Template Update
+#### Updating the Template
 
-If you need to update the template manually:
-
-```bash
-# Navigate to template directory
-cd fhevm-hardhat-template/
-
-# Update dependencies
-npm install
-
-# Or if it's a git submodule
-git submodule update --remote --merge
-
-# Return to root
-cd ..
-```
-
-#### Updating Dependencies in Generated Examples
-
-To update dependencies across all examples:
+The `fhevm-hardhat-template` is a git submodule. To update it:
 
 ```bash
-# Use refresh command (automated)
+# Update the submodule to latest
+git submodule update --remote fhevm-hardhat-template
+
+# Then refresh all examples to use the updated template
 npm run refresh
-
-# Or manually update each example's package.json
-# Then regenerate using create-example command with --override flag
 ```
+
+**Note:** The `refresh` command automatically handles template updates and dependency management. You don't need to manually update dependencies in generated examples - the refresh command does this automatically.
 
 ### Updating Configuration Files
 
@@ -451,13 +611,10 @@ We welcome contributions! Here's how to contribute a new example:
    - Write tests in `test/<category>/`
    - Follow existing patterns and include comments
 
-2. **Test Your Example**
-   ```bash
-   # Test locally in template
-   cd fhevm-hardhat-template/
-   # Copy files and test
-   npm run compile && npm run test
-   ```
+2. **Verify Your Files**
+   - Ensure your contract is in `contracts/<category>/YourExample.sol`
+   - Ensure your test is in `test/<category>/YourExample.ts`
+   - The discovery tool will automatically test it for you
 
 3. **Run Discovery**
    ```bash
@@ -472,8 +629,8 @@ We welcome contributions! Here's how to contribute a new example:
 4. **Verify Everything Works**
    ```bash
    # Generate the example to verify
-   npm run cli example <your-example-name> ./test-output
-   cd ./test-output/fhevm-example-<your-example-name>
+   npx fhe-playground example <your-example-name> ./output
+   cd ./output/fhevm-example-<your-example-name>
    npm install
    npm run compile
    npm run test
@@ -639,10 +796,12 @@ npm run generate-all-docs
 
 ## 📚 Resources
 
+- **npm Package**: [fhe-playground](https://www.npmjs.com/package/fhe-playground) - Install via `npm install -g fhe-playground` or use with `npx fhe-playground`
 - **FHEVM Documentation**: https://docs.zama.ai/fhevm
 - **Protocol Examples**: https://docs.zama.org/protocol/examples
 - **Base Template**: https://github.com/zama-ai/fhevm-hardhat-template
 - **OpenZeppelin Confidential Contracts**: https://github.com/OpenZeppelin/openzeppelin-confidential-contracts
+- **GitHub Repository**: https://github.com/Destiny-01/fhe-playground
 
 ---
 

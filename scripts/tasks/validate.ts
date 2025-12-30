@@ -40,6 +40,18 @@ function validateProject(projectDir: string, name: string, type: 'example' | 'ca
     return result;
   }
 
+  // Install dependencies first
+  try {
+    execSync('npm install', {
+      cwd: projectDir,
+      stdio: 'pipe',
+      timeout: 120000, // 2 minute timeout for npm install
+    });
+  } catch (error) {
+    result.error = 'Failed to install dependencies';
+    return result;
+  }
+
   // Try to compile
   try {
     execSync('npm run compile', {

@@ -40,7 +40,7 @@ contract AgeVerification is ZamaEthereumConfig {
 
         // Compute eligibility comparison (age >= minimumAge)
         euint8 minAgeEncrypted = FHE.asEuint8(minimumAge);
-        ebool isEligible = FHE.gte(age, minAgeEncrypted);
+        ebool isEligible = FHE.ge(age, minAgeEncrypted);
         FHE.allowThis(isEligible);
         FHE.allow(isEligible, msg.sender);
         _eligibilityResults[msg.sender] = isEligible;
